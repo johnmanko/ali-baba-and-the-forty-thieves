@@ -60,6 +60,8 @@ Reading resources:
 * Spring Security [Authorize HttpServletRequests](https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html)
 * [Java Configuration](https://docs.spring.io/spring-security/reference/servlet/configuration/java.html#jc-hello-wsca)
 * [@EnableWebSecurity](https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html#oauth2login-provide-securityfilterchain-bean)
+* [Testing Method Security](https://docs.spring.io/spring-security/reference/servlet/test/method.html)
+* [Working with Objects through RedisTemplate](https://docs.spring.io/spring-data/redis/reference/redis/template.html)
 
 ## Configuration
 
@@ -81,6 +83,8 @@ This project includes the `org.springframework.boot:spring-boot-docker-compose` 
 ```
 
 ## Test endpoing
+
+### Curl scripting
 
 From the root of this repo, run the `auth0-fetch-token.sh` test"
 
@@ -147,3 +151,47 @@ Output should look like:
   }
 ]
 ```
+
+### Maven tests
+
+> [!NOTE]
+> There is a problem with using WebTestClient and mocking JWT
+> See the following issues:
+> [spring-projects/spring-security/issues/9304](https://github.com/spring-projects/spring-security/issues/9304#issuecomment-841495717) (`archi-hub-85`'s comment solution works and was implemented as a workaround in the included tests)
+> [spring-projects/spring-security/issues/9257](https://github.com/spring-projects/spring-security/issues/9257)
+ 
+```shell
+./mvnw clean compile test
+```
+
+```
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] +--Testing '/api/cave/*' API - 4.500 s
+[INFO] |  +-- [OK] GET /api/cave/authorities (Authorized) - 0.138 s
+[INFO] |  +-- [OK] GET /api/cave/thieves-treasure (Unauthorized) - 0.012 s
+[INFO] |  +-- [OK] GET /api/cave/thieves-treasure (Authorized) - 0.081 s
+[INFO] |  +-- [OK] GET /api/cave/alibaba-treasure (Unauthorized) - 0.007 s
+[INFO] |  +-- [OK] GET /api/cave/alibaba-treasure (Authorized) - 0.012 s
+[INFO] |  +-- [OK] POST /api/cave/take-treasure (Unauthorized) - 0.012 s
+[INFO] |  '-- [OK] POST /api/cave/take-treasure (Authorized) - 0.033 s
+[INFO] +--Testing '/public/*' API - 1.146 s
+[INFO] |  '-- [OK] GET /public/config.json - 0.008 s
+[INFO] +--E2E Testing '/public/*' API - 2.137 s
+[INFO] |  '-- [OK] GET /public/config.json - 0.243 s
+[INFO] +--E2E Testing '/api/cave/*' API - 1.354 s
+[INFO] |  +-- [OK] GET /api/cave/authorities (Authorized) - 0.018 s
+[INFO] |  +-- [OK] GET /api/cave/thieves-treasure (Unauthorized) - 0.021 s
+[INFO] |  +-- [OK] GET /api/cave/thieves-treasure (Authorized) - 0.286 s
+[INFO] |  +-- [OK] GET /api/cave/alibaba-treasure (Unauthorized) - 0.007 s
+[INFO] |  +-- [OK] GET /api/cave/alibaba-treasure (Authorized) - 0.009 s
+[INFO] |  +-- [OK] POST /api/cave/take-treasure (Unauthorized) - 0.006 s
+[INFO] |  '-- [OK] POST /api/cave/take-treasure (Authorized) - 0.022 s
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0
+
+```
+

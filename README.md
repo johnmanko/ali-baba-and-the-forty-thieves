@@ -16,6 +16,34 @@ The services (Spring or Quarkus) serve an unprotected endpoint (`/public`), main
 
 ## Okta/Auth0
 
+
+### Create Auth0 Application
+
+A few notes about OIDC.
+
+[OpenID Connect (OIDC) scopes](https://auth0.com/docs/get-started/apis/scopes/openid-connect-scopes) are used by an application during authentication to authorize access to a user's details, like name and picture.
+
+Standard claims included in the most commonly-used scopes are listed below, but for a full list of available standard claims, read [OIDC specification: Standard Claims on openid.net](https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims). For a full list of Scopes, see [OIDC specification: Requesting Claims Using Scope Values on openid.net](https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims).
+
+Standard Claims:
+
+| Scope | Claims |
+| --- | --- |
+| `openid` | (required) Returns the sub claim, which uniquely identifies the user. In an ID Token, iss, aud, exp, iat, and at_hash claims will also be present. To learn more about the ID Token claims, read ID Token Structure. |
+| `profile` | Returns claims that represent basic profile information, including name, family_name, given_name, middle_name, nickname, picture, and updated_at. |
+| `email` | Returns the email claim, which contains the user's email address, and email_verified, which is a boolean indicating whether the email address was verified by the user. |
+
+More reading:
+* [Spring Boot API: Using Your API ](https://auth0.com/docs/quickstart/backend/java-spring-security5/02-using)
+* [Sample Use Cases: Actions with Authorization](https://auth0.com/docs/manage-users/access-control/sample-use-cases-actions-with-authorization)
+* [Auth0 - Getting Started](https://auth0.com/docs/get-started)
+* [OpenID Connect (OIDC) scopes](https://auth0.com/docs/get-started/apis/scopes/openid-connect-scopes)
+* [Add Login to Your Angular Application](https://auth0.com/docs/quickstart/spa/angular/interactive)
+* [Angular Authentication By Example](https://developer.auth0.com/resources/guides/spa/angular/basic-authentication)
+* [Single-Page Applications (SPA) with API](https://auth0.com/docs/get-started/architecture-scenarios/spa-api)
+
+---
+
 Head over to [okta.com](https://okta.com)/[auth0.com](https://auth0.com) and create a developer account.  
 
 <details>

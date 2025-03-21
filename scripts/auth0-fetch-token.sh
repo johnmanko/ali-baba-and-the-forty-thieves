@@ -39,7 +39,7 @@ echo "\n------------------------/public/config.json-----------------------------
 curl $CURL_OPTIONS $APP_URL/public/config.json | jq .
 set +x
 
-GET_ENDPOINTS=("authorities" "thieves-treasure" "ali-babas-treasure")
+GET_ENDPOINTS=("authorities" "thieves-treasure" "alibaba-treasure")
 
 for endpoint in "${GET_ENDPOINTS[@]}";
 do

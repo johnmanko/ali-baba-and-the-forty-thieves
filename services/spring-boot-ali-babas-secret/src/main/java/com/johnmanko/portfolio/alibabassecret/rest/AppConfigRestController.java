@@ -2,6 +2,7 @@ package com.johnmanko.portfolio.alibabassecret.rest;
 
 import com.johnmanko.portfolio.alibabassecret.models.AppConfigModel;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ public class AppConfigRestController {
     @Value("${app.config.client.auth.auth0.client-id}")
     private String authAuth0ClientId;
 
-    @GetMapping("/config.json")
+    @GetMapping(value="/config.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppConfigModel getAppConfig() {
         return new AppConfigModel(authAuth0Domain, authAuth0ClientId);
     }

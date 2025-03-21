@@ -3,6 +3,7 @@ package com.johnmanko.portfolio.alibabassecret.rest;
 import com.johnmanko.portfolio.alibabassecret.models.TreasureModel;
 import com.johnmanko.portfolio.alibabassecret.services.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -28,7 +29,7 @@ public class CaveRestController {
     @Autowired
     private RedisService redis;
 
-    @GetMapping("/authorities")
+    @GetMapping(value="/authorities", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String,Object> getPrincipalInfo(JwtAuthenticationToken principal) {
 
         Collection<String> authorities = principal.getAuthorities()
@@ -43,21 +44,23 @@ public class CaveRestController {
         return info;
     }
 
-    @GetMapping("/thieves-treasure")
+    @GetMapping(value="/thieves-treasure", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('treasure-hunter')")
     public CompletableFuture<TreasureModel> getTreasureCount() {
         return getTreasure("thieves-treasure", 1000);
     }
 
-    @GetMapping("/ali-babas-treasure")
+    @GetMapping(value="/alibaba-treasure", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('SCOPE_see:alibaba-treasure')")
     public CompletableFuture<TreasureModel> getAliBabasTreasureCount() {
-        return getTreasure("ali-babas-treasure", 0);
+        return getTreasure("alibaba-treasure", 0);
     }
 
-    @PostMapping("/take-treasure")
+    @PostMapping(value="/take-treasure",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('SCOPE_take:thieves-treasure')")
-    public CompletableFuture<List<TreasureModel>> takeTreasure(@RequestBody TreasureModel takeTreasure) {
+    public CompletableFuture<Map<String, Integer>> takeTreasure(@RequestBody TreasureModel takeTreasure) {
         return CompletableFuture.supplyAsync(() -> {
 
             CompletableFuture<TreasureModel> thievesCountFuture = getTreasureCount();
@@ -84,11 +87,12 @@ public class CaveRestController {
             alibabaTreasure = new TreasureModel(alibabaTreasure.owner(), alibabaTreasure.amount() + takeTreasure.amount());
             thievesTreasure = new TreasureModel(thievesTreasure.owner(), thievesTreasure.amount() - takeTreasure.amount());
 
-            redis.saveToRedis("ali-babas-treasure", alibabaTreasure.amount(), 60);
-            redis.saveToRedis("thieves-treasure", thievesTreasure.amount(), 60);
-
-            return Arrays.asList(alibabaTreasure, thievesTreasure);
-
+            redis.saveToRedis(alibabaTreasure.owner(), alibabaTreasure.amount(), 60);
+            redis.saveToRedis(thievesTreasure.owner(), thievesTreasure.amount(), 60);
+            Map<String, Integer> results = new HashMap<>();
+            results.put(alibabaTreasure.owner(), alibabaTreasure.amount());
+            results.put(thievesTreasure.owner(), thievesTreasure.amount());
+            return results;
         });
     }
 
